@@ -3,27 +3,20 @@ import 'package:flutter/cupertino.dart';
 
 import '../main.dart';
 
-GenericAlertDialog(BuildContext context, String text) {
+GenericAlertDialog(BuildContext context, String Title,String text) {
   // configura o button
   // ignore: deprecated_member_use
   Widget okButton = FlatButton(
-    child: Text(
+    child: const Text(
       "OK",
       style: TextStyle(fontSize: 18, color: Colors.deepPurple),
     ),
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
-    },
+    onPressed: () => Navigator.pop(context,true),
   );
   // configura o  AlertDialog
   AlertDialog alerta = AlertDialog(
     title: Text(
-      "Cadastro realizado com sucesso!",
+      Title,
       style: TextStyle(fontSize: 18),
     ),
     content: Text(
@@ -43,7 +36,7 @@ GenericAlertDialog(BuildContext context, String text) {
   );
 }
 
-showAlertDialog1(BuildContext context) {
+userCreated(BuildContext context) {
   // configura o button
   // ignore: deprecated_member_use
   Widget okButton = FlatButton(
@@ -55,7 +48,7 @@ showAlertDialog1(BuildContext context) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => App(),
         ),
       );
     },

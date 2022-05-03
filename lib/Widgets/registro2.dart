@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:littlears/Widgets/popup.dart';
+
+import '../main.dart';
+import 'login.dart';
 
 
 class FormularioC extends StatefulWidget {
@@ -102,37 +106,51 @@ class _FormularioCrianca extends State<FormularioCrianca> {
           password: Password.toString());
 
       print('Usuario criado com sucesso');
+
+      CollectionReference userInfoCollection = FirebaseFirestore.instance
+          .collection('UserInfo');
+      User? user = FirebaseAuth.instance.currentUser;
+
+      userInfoCollection.doc(user!.uid).set({
+        'contact': Contact,
+        'cpf': Cpf,
+        'fullName': Name
+      });
+
+
+      CollectionReference testCollection = FirebaseFirestore.instance.collection(
+          'Child');
+
+      testCollection.doc().set({
+        'birthDate': childBirthdate,
+        'fullName': childName,
+        'implantDate': childImplantDate,
+        'implant': childImplant,
+        'userId': user.uid
+      });
+
+      userCreated(context);
+
+      //Navigator.push(
+      //    context,
+      //    MaterialPageRoute(
+      //      builder: (context) => const App(),
+      //    ));
+
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email')
-        print('Formato de email errado.');
-      if (e.code == 'weak-password')
-        print('Senha fraca.');
+      if (e.code == 'invalid-email') {
+        GenericAlertDialog(context,'Erro ao realizar cadastro','Email não é valido');
+      }
+      if (e.code == 'weak-password') {
+        GenericAlertDialog(context,'Erro ao realizar cadastro','Senha fraca');
+      }
+      if (e.code == 'email-already-in-use'){
+        GenericAlertDialog(context,'Erro ao realizar cadastro','Email ja esta sendo usado');
+      }
     }
     catch (ex) {
-      print(ex);
+      GenericAlertDialog(context,'Erro ao realizar cadastro',ex.toString());
     }
-
-    CollectionReference userInfoCollection = FirebaseFirestore.instance
-        .collection('UserInfo');
-    User? user = FirebaseAuth.instance.currentUser;
-
-    userInfoCollection.doc(user!.uid).set({
-      'contact': Contact,
-      'cpf': Cpf,
-      'fullName': Name
-    });
-
-
-    CollectionReference testCollection = FirebaseFirestore.instance.collection(
-        'Child');
-
-    testCollection.doc().set({
-      'birthDate': childBirthdate,
-      'fullName': childName,
-      'implantDate': childImplantDate,
-      'implant': childImplant,
-      'userId': user.uid
-    });
   }
 
   @override
@@ -175,7 +193,7 @@ class _FormularioCrianca extends State<FormularioCrianca> {
             onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     context: context, initialDate: DateTime.now(),
-                    firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
+                    firstDate: DateTime(1995), //DateTime.now() - not to allow to choose before today.
                     lastDate: DateTime(2101)
                 );
 
@@ -189,7 +207,7 @@ class _FormularioCrianca extends State<FormularioCrianca> {
                     _childBirthdateController.text = formattedDate; //set output date to TextField value.
                   });
                 }else{
-                  print("Date is not selected");
+                  print("Data não selecionada.");
                 }
             },
           ),
@@ -204,6 +222,26 @@ class _FormularioCrianca extends State<FormularioCrianca> {
               labelText: "Data do implante",
             ),
             controller: _childImplantDateController,
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                  context: context, initialDate: DateTime.now(),
+                  firstDate: DateTime(1995), //DateTime.now() - not to allow to choose before today.
+                  lastDate: DateTime(2101)
+              );
+
+              if(pickedDate != null ){
+                print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
+                String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                //you can implement different kind of Date Format here according to your requirement
+
+                setState(() {
+                  _childImplantDateController.text = formattedDate; //set output date to TextField value.
+                });
+              }else{
+                print("Data não selecionada.");
+              }
+            },
           ),
           const Divider(
             color: Colors.white,
