@@ -2,10 +2,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 
-class FormularioC extends StatelessWidget {
-  const FormularioC({Key? key, required this.fullName, required this.email, required this.contact, required this.cpf, required this.password}) : super(key: key);
+class FormularioC extends StatefulWidget {
+  const FormularioC(
+      {Key? key, required this.fullName, required this.email, required this.contact, required this.cpf, required this.password})
+      : super(key: key);
+
+  final String fullName;
+  final String email;
+  final String contact;
+  final String cpf;
+  final String password;
+
+  @override
+  _TextosState createState() => _TextosState(fullName: fullName, email: email, contact: contact, cpf: cpf, password: password);
+
+}
+
+class _TextosState extends State<FormularioC> {
+  _TextosState({
+        Key? key,
+        required this.fullName,
+        required this.email,
+        required this.contact,
+        required this.cpf,
+        required this.password
+      });
 
   final String fullName;
   final String email;
@@ -31,9 +55,23 @@ class FormularioC extends StatelessWidget {
   }
 }
 
-class FormularioCrianca extends StatelessWidget {
+class FormularioCrianca extends StatefulWidget {
+  const FormularioCrianca(
+      {Key? key, required this.Name, required this.Email, required this.Contact, required this.Cpf, required this.Password})
+      : super(key: key);
 
-  FormularioCrianca({Key? key, required this.Name, required this.Email,
+  final String Name;
+  final String Email;
+  final String Contact;
+  final String Cpf;
+  final String Password;
+
+  @override
+  _FormularioCrianca createState() => _FormularioCrianca(Name: Name,Email: Email, Contact: Contact, Cpf: Cpf, Password: Password);
+}
+
+class _FormularioCrianca extends State<FormularioCrianca> {
+  _FormularioCrianca({Key? key, required this.Name, required this.Email,
     required this.Contact, required this.Cpf, required this.Password});
 
   final String Name;
@@ -54,7 +92,8 @@ class FormularioCrianca extends StatelessWidget {
     final String? childImplantDate = _childImplantDateController.text;
     final String? childImplant = _childImplantController.text;
 
-    print('Apertou em registrar email: '+ Email.toString() + ' senha: '+ Password.toString());
+    print('Apertou em registrar email: ' + Email.toString() + ' senha: ' +
+        Password.toString());
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -63,18 +102,18 @@ class FormularioCrianca extends StatelessWidget {
           password: Password.toString());
 
       print('Usuario criado com sucesso');
-
-    } on FirebaseAuthException catch(e){
-      if(e.code == 'invalid-email')
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email')
         print('Formato de email errado.');
-      if(e.code == 'weak-password')
+      if (e.code == 'weak-password')
         print('Senha fraca.');
     }
-    catch(ex){
+    catch (ex) {
       print(ex);
     }
 
-    CollectionReference userInfoCollection = FirebaseFirestore.instance.collection('UserInfo');
+    CollectionReference userInfoCollection = FirebaseFirestore.instance
+        .collection('UserInfo');
     User? user = FirebaseAuth.instance.currentUser;
 
     userInfoCollection.doc(user!.uid).set({
@@ -84,16 +123,16 @@ class FormularioCrianca extends StatelessWidget {
     });
 
 
-    CollectionReference testCollection = FirebaseFirestore.instance.collection('Child');
+    CollectionReference testCollection = FirebaseFirestore.instance.collection(
+        'Child');
 
     testCollection.doc().set({
       'birthDate': childBirthdate,
       'fullName': childName,
       'implantDate': childImplantDate,
-      'implant' : childImplant,
+      'implant': childImplant,
       'userId': user.uid
     });
-
   }
 
   @override
@@ -133,8 +172,25 @@ class FormularioCrianca extends StatelessWidget {
               labelText: "Data de nascimento",
             ),
             controller: _childBirthdateController,
-            onTap: (){
+            onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context, initialDate: DateTime.now(),
+                    firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
+                    lastDate: DateTime(2101)
+                );
 
+                if(pickedDate != null ){
+                  print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                  //you can implement different kind of Date Format here according to your requirement
+
+                  setState(() {
+                    _childBirthdateController.text = formattedDate; //set output date to TextField value.
+                  });
+                }else{
+                  print("Date is not selected");
+                }
             },
           ),
           const Divider(
@@ -187,6 +243,4 @@ class FormularioCrianca extends StatelessWidget {
       ),
     );
   }
-
-
 }
