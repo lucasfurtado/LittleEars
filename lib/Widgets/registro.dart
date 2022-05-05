@@ -28,20 +28,111 @@ class Registro extends StatelessWidget {
 
 class Forumlario extends StatelessWidget {
 
+  //begin controllers
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  //end controllers
 
+  //begin input masks
   final _maskCPFFormatter = MaskTextInputFormatter(mask: '###.###.###-##', );
   final _maskContactFormatter = MaskTextInputFormatter(mask: '(##) # ####-####', );
+  final _maskContact2Formatter = MaskTextInputFormatter(mask: '(##) ####-####', );
+  //end input masks
 
-  bool _emailValidation(String email){
+  //begin validate methods
+  bool _nameValidation(fullName,BuildContext context){
+    try{
+      if(fullName.isNotEmpty){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Insira um nome');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+
+  bool _emailValidation(String email, BuildContext context){
+    try{
+      if(EmailValidator.validate(email)){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Insira um email válido');
+        return false;
+      }
+    } on Exception catch (exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+    }
     return EmailValidator.validate(email);
   }
 
+  bool _contactValidation(String contact, BuildContext context){
+    try{
+      if(contact.length == 16 || contact.length == 14){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Coloque um número de contato válido');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado' + exception.toString());
+      return false;
+    }
+  }
+
+  bool _cpfValidation(String cpf, BuildContext context){
+    try{
+      if(cpf.length == 14){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','CPF deve conter 11 números.');
+        return false;
+      }
+    } on Exception catch (exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado' + exception.toString());
+      return false;
+    }
+  }
+
+  bool _passwordMatch(String password, String confirmPassword, BuildContext context){
+    try{
+      if(password == confirmPassword){
+        return true;
+      } else {
+        GenericAlertDialog(context,'Erro ao registrar','As senhas devem coincidir.');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+
+  bool _validateData(String fullName, String email, String contact, String cpf, String password, String confirmPassword, BuildContext context){
+    try{
+      if(_nameValidation(fullName, context) && _emailValidation(email, context) && _contactValidation(contact, context) && _cpfValidation(cpf, context) && _passwordMatch(password, confirmPassword, context)){
+        return true;
+      } else{
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+  //end validate methods
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +168,7 @@ class Forumlario extends StatelessWidget {
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(fontSize: 18),
             decoration: const InputDecoration(
-              labelText: "E-mail *",
+              labelText: "E-mail",
             ),
             controller: _emailController,
           ),
@@ -92,7 +183,8 @@ class Forumlario extends StatelessWidget {
               labelText: "Telefone para contato",
             ),
             controller: _contactController,
-            inputFormatters: [_maskContactFormatter,],
+            inputFormatters: _contactController.text.length == 16 ? [_maskContactFormatter,] : [_maskContact2Formatter,],    //this isn't making any sense now just ignore it
+
           ),
           const Divider(
             color: Colors.white,
@@ -116,7 +208,7 @@ class Forumlario extends StatelessWidget {
             obscureText: true,
             style: const TextStyle(fontSize: 18),
             decoration: const InputDecoration(
-              labelText: "Senha *",
+              labelText: "Senha",
             ),
             controller: _passwordController,
           ),
@@ -129,7 +221,7 @@ class Forumlario extends StatelessWidget {
             obscureText: true,
             style: const TextStyle(fontSize: 18),
             decoration: const InputDecoration(
-              labelText: "Confirmar senha *",
+              labelText: "Confirmar senha",
             ),
             controller: _confirmPasswordController,
           ),
@@ -143,36 +235,20 @@ class Forumlario extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () => {
-                if(_passwordController.text.isNotEmpty){
-                  if(_emailController.text.isNotEmpty){
-                    if(_passwordController.text == _confirmPasswordController.text){
-                      if(_emailValidation(_emailController.text)){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FormularioC(
-                              fullName: _fullNameController.text,
-                              contact: _contactController.text,
-                              cpf: _cpfController.text,
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            ),
-                          ),
-                        ),
-                      } else{
-                        emailNotValid(context),
-                      }
-                    } else{
-                      passwordMustMatch(context),
-                    }
-                  } else{
-                    emailEmpty(context),
-                  }
-                } else {
-                  passwordEmpty(context),
+                if(_validateData(_fullNameController.text, _emailController.text, _contactController.text, _cpfController.text, _passwordController.text, _confirmPasswordController.text, context)){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FormularioC(
+                        fullName: _fullNameController.text,
+                        contact: _contactController.text,
+                        cpf: _cpfController.text,
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      ),
+                    ),
+                  ),
                 }
-
-
               },
               child: const Text(
                 "Próxima página",
