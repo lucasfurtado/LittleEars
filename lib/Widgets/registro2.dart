@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:littlears/Widgets/popup.dart';
-
-import '../main.dart';
-import 'login.dart';
 
 
 class FormularioC extends StatefulWidget {
@@ -52,7 +48,7 @@ class _TextosState extends State<FormularioC> {
       ),
       body: ListView(
         children: <Widget>[
-          FormularioCrianca(Name: fullName,Email: email, Contact: contact, Cpf: cpf, Password: password),
+          FormularioCrianca(name: fullName,email: email, contact: contact, cpf: cpf, password: password),
         ],
       ),
     );
@@ -61,49 +57,105 @@ class _TextosState extends State<FormularioC> {
 
 class FormularioCrianca extends StatefulWidget {
   const FormularioCrianca(
-      {Key? key, required this.Name, required this.Email, required this.Contact, required this.Cpf, required this.Password})
+      {Key? key, required this.name, required this.email, required this.contact, required this.cpf, required this.password})
       : super(key: key);
 
-  final String Name;
-  final String Email;
-  final String Contact;
-  final String Cpf;
-  final String Password;
+  final String name;
+  final String email;
+  final String contact;
+  final String cpf;
+  final String password;
 
   @override
-  _FormularioCrianca createState() => _FormularioCrianca(Name: Name,Email: Email, Contact: Contact, Cpf: Cpf, Password: Password);
+  _FormularioCrianca createState() => _FormularioCrianca(name: name,email: email, contact: contact, cpf: cpf, password: password);
 }
 
 class _FormularioCrianca extends State<FormularioCrianca> {
-  _FormularioCrianca({Key? key, required this.Name, required this.Email,
-    required this.Contact, required this.Cpf, required this.Password});
+  _FormularioCrianca({Key? key, required this.name, required this.email,
+    required this.contact, required this.cpf, required this.password});
 
-  final String Name;
-  final String Email;
-  final String Contact;
-  final String Cpf;
-  final String Password;
+  final String name;
+  final String email;
+  final String contact;
+  final String cpf;
+  final String password;
 
   final TextEditingController _childNameController = TextEditingController();
   final TextEditingController _childBirthdateController = TextEditingController();
   final TextEditingController _childImplantDateController = TextEditingController();
   final TextEditingController _childImplantController = TextEditingController();
 
-  Future<void> _userRegister(BuildContext context) async
-  {
-    final String? childName = _childNameController.text;
-    final String? childBirthdate = _childBirthdateController.text;
-    final String? childImplantDate = _childImplantDateController.text;
-    final String? childImplant = _childImplantController.text;
-
-    print('Apertou em registrar email: ' + Email.toString() + ' senha: ' +
-        Password.toString());
-
+  bool _childNameValidate(BuildContext context, String childName){
+    try{
+      if(childName.isNotEmpty){
+        return true;
+      } else {
+        GenericAlertDialog(context,'Erro ao registrar','Coloque o nome da criança.');
+        return false; 
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+  
+  bool _childBirthdateValidate(BuildContext context, String birthDate){
+    try{
+      if(birthDate.isNotEmpty){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Coloque a data de nascimento.');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+  
+  bool _childChildImplantDateValidate(BuildContext context, String implantDate){
+    try{
+      if(implantDate.isNotEmpty){
+        return true;
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Coloque a data do implante.');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+  
+  bool _childImplantValidate(BuildContext context, String implant){
+    try{
+      if(implant.isNotEmpty){
+        if(implant == 'IC' || implant == 'HA' || implant == 'OUTRO'){
+          return true;
+        } else{
+          GenericAlertDialog(context,'Erro ao registrar','Digite IC, HA ou OUTRO.');
+          return false;
+        }
+      } else{
+        GenericAlertDialog(context,'Erro ao registrar','Coloque o tipo do implante.');
+        return false;
+      }
+    } on Exception catch(exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      return false;
+    }
+  }
+  
+  Future<void> _userRegister(BuildContext context, String childName, String childBirthdate, String childImplantDate, String childImplant) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-          email: Email.toString(),
-          password: Password.toString());
+          email: email.toString(),
+          password: password.toString());
 
       print('Usuario criado com sucesso');
 
@@ -112,11 +164,10 @@ class _FormularioCrianca extends State<FormularioCrianca> {
       User? user = FirebaseAuth.instance.currentUser;
 
       userInfoCollection.doc(user!.uid).set({
-        'contact': Contact,
-        'cpf': Cpf,
-        'fullName': Name
+        'contact': contact,
+        'cpf': cpf,
+        'fullName': name
       });
-
 
       CollectionReference testCollection = FirebaseFirestore.instance.collection(
           'Child');
@@ -130,12 +181,6 @@ class _FormularioCrianca extends State<FormularioCrianca> {
       });
 
       userCreated(context);
-
-      //Navigator.push(
-      //    context,
-      //    MaterialPageRoute(
-      //      builder: (context) => const App(),
-      //    ));
 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
@@ -152,7 +197,7 @@ class _FormularioCrianca extends State<FormularioCrianca> {
       GenericAlertDialog(context,'Erro ao realizar cadastro',ex.toString());
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -264,7 +309,17 @@ class _FormularioCrianca extends State<FormularioCrianca> {
             height: 40,
             // ignore: deprecated_member_use
             child: RaisedButton(
-              onPressed: () => _userRegister(context),
+              onPressed: () => 
+              {
+                if(_childNameValidate(context, _childNameController.text) && _childBirthdateValidate(context, _childBirthdateController.text) && _childChildImplantDateValidate(context, _childImplantDateController.text) && _childImplantValidate(context, _childImplantController.text)){
+                  _userRegister(
+                      context,
+                      _childNameController.text,
+                      _childBirthdateController.text,
+                      _childImplantDateController.text,
+                      _childImplantController.text)
+                }
+              },
               child: const Text(
                 "Enviar",
                 style: TextStyle(fontSize: 18),
