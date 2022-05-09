@@ -20,16 +20,16 @@ class _TesteState extends State<Teste> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("Teste auditivo 1/6"),
+        title: const Text("Teste auditivo 1/6"),
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 20, bottom: 0),
+        padding: const EdgeInsets.only(top: 20, bottom: 0),
         child: Column(
           children: <Widget>[
             CheckboxListTile(
-              title: Text(
+              title: const Text(
                 "Seu filho responde a uma voz familiar?",
                 style: TextStyle(
                   fontSize: 18,

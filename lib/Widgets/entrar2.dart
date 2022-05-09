@@ -3,18 +3,24 @@ import 'package:flutter/cupertino.dart';
 import 'teste.dart';
 
 class Entrar2 extends StatelessWidget {
+  const Entrar2({Key? key, required this.implant, required this.implantDate}) : super(key: key);
+
+  final String implant;
+  final String implantDate;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text(
+      appBar: AppBar(
+        title: const Text(
           "Teste de audição",
         ),
         backgroundColor: Colors.deepPurple,
       ),
       body: ListView(
         children: <Widget>[
-          Continuar(),
+          Continuar(implant: implant,implantDate: implantDate,),
         ],
       ),
     );
@@ -22,111 +28,67 @@ class Entrar2 extends StatelessWidget {
 }
 
 class Continuar extends StatefulWidget {
+  Continuar({Key? key,required this.implant, required this.implantDate}) : super(key: key);
+
+  String implant;
+  String implantDate;
+
   @override
-  _ContinuarState createState() => _ContinuarState();
+  _ContinuarState createState() => _ContinuarState(implant: implant, implantDate: implantDate);
 }
 
 class _ContinuarState extends State<Continuar> {
-  DateTime _date = DateTime.now();
-  bool pergunta1 = false;
+   _ContinuarState({Key? key,required this.implant,required this.implantDate});
 
-  Future<Null> selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(1980),
-      lastDate: DateTime(2100),
-    );
-
-    if (picked != null && picked != _date) {
-      setState(() {
-        _date = picked;
-        print(_date);
-      });
-    }
-  }
-
-  void _setStatus(bool? newStatus)
-  {
-    setState(() {
-      pergunta1 = newStatus!;
-    });
-  }
+  late final String implant;
+  late final String implantDate;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 30, right: 30, top: 30),
+      padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
       child: Column(
         children: <Widget>[
-          Text(
+          const Text(
             "Como preencher o questionário:",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20),
           ),
-          Divider(
+          const Divider(
             color: Colors.white,
             height: 30,
           ),
-          Text(
+          const Text(
             "Todas as perguntas devem ser respondidas marcando ou não marcando.",
             textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 18),
           ),
-          Divider(
+          const Divider(
             color: Colors.white,
             height: 10,
           ),
-          Text(
+          const Text(
             "Marque: se você já observou o comportamento do seu filho pelo menos uma vez.",
             textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 18),
           ),
-          Divider(
+          const Divider(
             color: Colors.white,
             height: 10,
           ),
-          Text(
+          const Text(
             "Não marque: se você nunca observou o comportamento do seu filho, ou se não tem certeza de como responder à pergunta.",
             textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 18),
           ),
-          Divider(
+          const Divider(
             color: Colors.white,
             height: 10,
           ),
-          Text(
+          const Text(
             "É normal que algumas perguntas sejam respondidas e outras não.",
             textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 18),
-          ),
-          Divider(
-            color: Colors.white,
-            height: 10,
-          ),
-          Text(
-            "Antes de inicar o teste, responda a pergunta abaixo",
-            textAlign: TextAlign.justify,
-            style: TextStyle(fontSize: 18),
-          ),
-          Divider(
-            color: Colors.white,
-            height: 10,
-          ),
-          CheckboxListTile(
-            title: Text(
-              "O seu filho está equipado com IC (s) ou HA (s)?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            activeColor: Colors.deepPurple,
-            value: pergunta1,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta1 = valor!;
-              });
-            },
           ),
           Divider(
             color: Colors.white,
@@ -136,23 +98,31 @@ class _ContinuarState extends State<Continuar> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                "Selecione a data do nascimento\ndo seu filho:",
+                "O seu filho está equipado com: " + implant,
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontSize: 18,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () {
-                  setState(() {
-                    selectDate(context);
-                  });
-                },
+            ],
+          ),
+          const Divider(
+            color: Colors.white,
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text(
+                "Data do nascimento\ndo seu filho: " + implantDate,
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
-          Divider(
+          const Divider(
             color: Colors.white,
             height: 20,
           ),
@@ -169,7 +139,7 @@ class _ContinuarState extends State<Continuar> {
                   ),
                 ),
               },
-              child: Text(
+              child: const Text(
                 "Iniciar teste",
                 style: TextStyle(fontSize: 18),
               ),
@@ -177,7 +147,7 @@ class _ContinuarState extends State<Continuar> {
               splashColor: Colors.deepPurple,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
-                side: BorderSide(color: Colors.deepPurple),
+                side: const BorderSide(color: Colors.deepPurple),
               ),
             ),
           ),
