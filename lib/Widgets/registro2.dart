@@ -238,8 +238,8 @@ class _FormularioCrianca extends State<FormularioCrianca> {
             onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     context: context, initialDate: DateTime.now(),
-                    firstDate: DateTime(1995), //DateTime.now() - not to allow to choose before today.
-                    lastDate: DateTime(2101)
+                    firstDate: DateTime(DateTime.now().year-2, DateTime.now().month, DateTime.now().day), //DateTime.now() - not to allow to choose before today.
+                    lastDate: DateTime.now()
                 );
 
                 if(pickedDate != null ){
@@ -270,8 +270,8 @@ class _FormularioCrianca extends State<FormularioCrianca> {
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
                   context: context, initialDate: DateTime.now(),
-                  firstDate: DateTime(1995), //DateTime.now() - not to allow to choose before today.
-                  lastDate: DateTime(2101)
+                  firstDate: DateTime(DateTime.now().year-2, DateTime.now().month, DateTime.now().day), //DateTime.now() - not to allow to choose before today.
+                  lastDate: DateTime.now()
               );
 
               if(pickedDate != null ){
