@@ -30,7 +30,7 @@ class Sobre extends StatelessWidget {
   String implant = "";
 
 
-  Future<void> _prepareChildInfo() async {
+  Future<void> _prepareChildInfo(BuildContext context) async {
 
     var db = FirebaseFirestore.instance;
 
@@ -99,13 +99,16 @@ class Sobre extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () => {
-                _prepareChildInfo(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Entrar2(implant: implant, implantDate: implantDate),
-                  ),
-                ),
+                _prepareChildInfo(context),
+
+                Future.delayed(const Duration(milliseconds: 2000), (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Entrar2(implant: implant, implantDate: implantDate),
+                    ),
+                  );
+                }),
               },
               child: const Text(
                 "Continuar",
