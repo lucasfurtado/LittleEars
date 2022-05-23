@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:littlears/Widgets/teste4.dart';
 
@@ -13,6 +15,21 @@ class _Teste3State extends State<Teste3> {
   bool pergunta19 = false;
   bool pergunta20 = false;
   bool pergunta21 = false;
+
+  Future<void> _questionpart3(BuildContext context) async {
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+    FirebaseFirestore.instance.collection('QuestionResult').doc(user!.uid).update({
+      'question15' : pergunta16,
+      'question16' : pergunta17,
+      'question17' : pergunta18,
+      'question18' : pergunta19,
+      'question19' : pergunta20,
+      'question20' : pergunta21,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,134 +39,137 @@ class _Teste3State extends State<Teste3> {
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
       ),
-      body: Container(
-        padding: EdgeInsets.only(top: 20),
-        child: Column(children: <Widget>[
-          CheckboxListTile(
-            title: Text(
-              "Quando seu filho está triste ou mal-humorado, ele pode se acalmar ou ser influenciado pela música?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            activeColor: Colors.deepPurple,
-            value: pergunta16,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta16 = valor!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              "Seu filho escuta ao telefone e parece reconhecer que alguém está falando?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            subtitle: Text(
-                "Quando a avó ou o papai ligam, a criança pega o fone e \"escuta\"."),
-            activeColor: Colors.deepPurple,
-            value: pergunta17,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta17 = valor!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              "Seu filho responde à música com movimentos rítmicos?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            subtitle:
-                Text("A criança move os braços / pernas ao som da música."),
-            activeColor: Colors.deepPurple,
-            value: pergunta18,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta18 = valor!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              "Seu filho sabe que certo som está relacionado a certo objeto ou evento?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            subtitle: Text(
-                "A criança ouve o som de um avião e olha para o céu, ou ouve um carro e olha para a rua."),
-            activeColor: Colors.deepPurple,
-            value: pergunta19,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta19 = valor!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              "Seu filho responde apropriadamente a comentários curtos e simples?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            subtitle: Text("\"Pare!\" \"Que nojo!\" \"Não!\""),
-            activeColor: Colors.deepPurple,
-            value: pergunta20,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta20 = valor!;
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              "Seu filho responde a \"Não\" interrompendo sua atividade atual?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            subtitle: Text(
-                "Um \"não, não!\" Fortemente pronunciado - embora a criança não te veja (!) - é eficaz."),
-            activeColor: Colors.deepPurple,
-            value: pergunta21,
-            onChanged: (bool? valor) {
-              setState(() {
-                pergunta21 = valor!;
-              });
-            },
-          ),
-          ButtonTheme(
-            minWidth: 150,
-            height: 40,
-            // ignore: deprecated_member_use
-            child: RaisedButton(
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Teste4(),
-                  ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(top: 20),
+          child: Column(children: <Widget>[
+            CheckboxListTile(
+              title: Text(
+                "Quando seu filho está triste ou mal-humorado, ele pode se acalmar ou ser influenciado pela música?",
+                style: TextStyle(
+                  fontSize: 18,
                 ),
-              },
-              child: Text(
-                "Próxima pagina",
-                style: TextStyle(fontSize: 18),
               ),
-              color: Colors.white,
-              splashColor: Colors.deepPurple,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-                side: BorderSide(color: Colors.deepPurple),
+              activeColor: Colors.deepPurple,
+              value: pergunta16,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta16 = valor!;
+                });
+              },
+            ),
+            CheckboxListTile(
+              title: Text(
+                "Seu filho escuta ao telefone e parece reconhecer que alguém está falando?",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                  "Quando a avó ou o papai ligam, a criança pega o fone e \"escuta\"."),
+              activeColor: Colors.deepPurple,
+              value: pergunta17,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta17 = valor!;
+                });
+              },
+            ),
+            CheckboxListTile(
+              title: Text(
+                "Seu filho responde à música com movimentos rítmicos?",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              subtitle:
+                  Text("A criança move os braços / pernas ao som da música."),
+              activeColor: Colors.deepPurple,
+              value: pergunta18,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta18 = valor!;
+                });
+              },
+            ),
+            CheckboxListTile(
+              title: Text(
+                "Seu filho sabe que certo som está relacionado a certo objeto ou evento?",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                  "A criança ouve o som de um avião e olha para o céu, ou ouve um carro e olha para a rua."),
+              activeColor: Colors.deepPurple,
+              value: pergunta19,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta19 = valor!;
+                });
+              },
+            ),
+            CheckboxListTile(
+              title: Text(
+                "Seu filho responde apropriadamente a comentários curtos e simples?",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text("\"Pare!\" \"Que nojo!\" \"Não!\""),
+              activeColor: Colors.deepPurple,
+              value: pergunta20,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta20 = valor!;
+                });
+              },
+            ),
+            CheckboxListTile(
+              title: Text(
+                "Seu filho responde a \"Não\" interrompendo sua atividade atual?",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                  "Um \"não, não!\" Fortemente pronunciado - embora a criança não te veja (!) - é eficaz."),
+              activeColor: Colors.deepPurple,
+              value: pergunta21,
+              onChanged: (bool? valor) {
+                setState(() {
+                  pergunta21 = valor!;
+                });
+              },
+            ),
+            ButtonTheme(
+              minWidth: 150,
+              height: 40,
+              // ignore: deprecated_member_use
+              child: RaisedButton(
+                onPressed: () => {
+                  _questionpart3(context),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Teste4(),
+                    ),
+                  ),
+                },
+                child: Text(
+                  "Próxima pagina",
+                  style: TextStyle(fontSize: 18),
+                ),
+                color: Colors.white,
+                splashColor: Colors.deepPurple,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  side: BorderSide(color: Colors.deepPurple),
+                ),
               ),
             ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
