@@ -152,6 +152,9 @@ class _FormularioCrianca extends State<FormularioCrianca> {
   
   Future<void> _userRegister(BuildContext context, String childName, String childBirthdate, String childImplantDate, String childImplant) async {
     try {
+
+      print(DateTime.parse(childBirthdate));
+
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
           email: email.toString(),
@@ -173,11 +176,11 @@ class _FormularioCrianca extends State<FormularioCrianca> {
           'Child');
 
       testCollection.doc().set({
-        'birthDate': childBirthdate,
+        'birthDate': DateTime.parse(childBirthdate),
         'fullName': childName,
-        'implantDate': childImplantDate,
+        'implantDate': DateTime.parse(childImplantDate),
         'implant': childImplant,
-        'userId': user.uid
+        'userId': user.uid,
       });
 
       userCreated(context);
