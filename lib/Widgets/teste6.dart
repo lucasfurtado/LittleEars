@@ -1,6 +1,10 @@
+import 'package:age_calculator/age_calculator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../screens/PlotGraphOne.dart';
 
 class Teste6 extends StatefulWidget {
   @override
@@ -12,6 +16,9 @@ class _Teste6State extends State<Teste6> {
   bool pergunta36 = false;
   bool pergunta37 = false;
   bool pergunta38 = false;
+
+  late double _xLate = 0;
+  late double _yLate = 0;
 
 
   Future<void> _questionpart6(BuildContext context) async {
@@ -26,6 +33,84 @@ class _Teste6State extends State<Teste6> {
 
     });
   }
+
+  Future<void> _y () async{
+    double y = 0;
+    User? user = FirebaseAuth.instance.currentUser;
+    CollectionReference result = FirebaseFirestore.instance.collection('QuestionResult');
+
+    var docSnapshot = await result.doc(user?.uid).get();
+
+    for(int i=1 ; i <= 37; i++){
+      bool result = docSnapshot.get('question$i');
+      if(result){
+        y++;
+      }
+    }
+    _yLate = y;
+  }
+
+  Future<void> _x () async{
+    User? user = FirebaseAuth.instance.currentUser;
+    late Timestamp childAge;
+    await FirebaseFirestore.instance.collection("Child").get().then((event) {
+      for (var doc in event.docs) {
+        if(doc.data()['userId'] == user?.uid){
+          print('Achou');
+          childAge = doc.data()['birthDate'];
+        }
+      }
+    });
+
+    var childDate = childAge.toDate();
+
+    DateDuration duration;
+    duration = AgeCalculator.age(childDate);
+    _xLate = duration.months + duration.years*12;
+  }
+
+  Future<FlSpot> _buscaResultado(BuildContext context) async{
+
+    double x = 0;
+    double y = 0;
+
+    late Timestamp childAge;
+
+    User? user = FirebaseAuth.instance.currentUser;
+    CollectionReference result = FirebaseFirestore.instance.collection('QuestionResult');
+
+    var docSnapshot = await result.doc(user?.uid).get();
+
+    for(int i=1 ; i <= 37; i++){
+      bool result = docSnapshot.get('question$i');
+      if(result){
+        y++;
+      }
+    }
+
+    await FirebaseFirestore.instance.collection("Child").get().then((event) {
+      for (var doc in event.docs) {
+        //print("${doc.id} => ${doc.data()}");
+        //print(doc.data()['userId']);
+        if(doc.data()['userId'] == user?.uid){
+          print('Achou');
+          childAge = doc.data()['birthDate'];
+        }
+      }
+    });
+
+    var childDate = childAge.toDate();
+    //var dateNow = DateTime.now();
+    //var difference = dateNow.difference(childDate).inDays;
+
+    DateDuration duration;
+    duration = AgeCalculator.age(childDate);
+    x = duration.months + duration.years*12;
+    //var difference = dateNow.difference(childDate).inDays;
+
+    return FlSpot(x, y);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +197,17 @@ class _Teste6State extends State<Teste6> {
                 child: RaisedButton(
                   onPressed: () => {
                     _questionpart6(context),
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Teste6(),
-                      ),
-                    ),
+                    _x(),
+                    _y(),
+
+                    Future.delayed(const Duration(milliseconds: 2000), (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlotGraphOne(x: _xLate,y: _yLate,),
+                        ),
+                      );
+                    }),
                   },
                   child: Text(
                     "Gerar resultados",

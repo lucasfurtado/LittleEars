@@ -42,6 +42,7 @@ dependencies:
   intl: ^0.17.0
   flutter_plot: ^0.1.0
   fl_chart: ^0.51.0
+  age_calculator: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 
 class PlotGraphOne extends StatelessWidget {
-  const PlotGraphOne({Key? key}) : super(key: key);
-  
+  const PlotGraphOne({Key? key, required this.x, required this.y }) : super(key: key);
+
+  final double x;
+  final double y;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,12 +17,15 @@ class PlotGraphOne extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        home: MyHomePage());
+        home: MyHomePage(x: x,y: y,));
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  MyHomePage({Key? key, required this.x, required this.y}) : super(key: key);
+
+  final double x;
+  final double y;
 
   // Generate some dummy data for the cahrt
   // This will be used to draw the red line
@@ -85,7 +91,7 @@ class MyHomePage extends StatelessWidget {
                 // The orange line
                 LineChartBarData(
                   spots: [
-                    FlSpot(28, 20),
+                    FlSpot(x, y),
                   ],
                   isCurved: true,
                   barWidth: 3,
