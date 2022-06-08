@@ -46,6 +46,12 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('Score: ${y.toString()} - Meses: ${x.toString()}'),
+        backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(20),
