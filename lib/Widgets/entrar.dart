@@ -42,7 +42,9 @@ class Sobre extends StatelessWidget {
         print("${doc.id} => ${doc.data()}");
         print(doc.data()['userId']);
         if(doc.data()['userId'] == user?.uid){
-          implantDate = doc.data()['implantDate'].toDate().toString();
+          //implantDate = doc.data()['implantDate'].toDate().toString();
+          DateTime dateImplant = doc.data()['implantDate'].toDate();
+          implantDate = DateFormat('dd-MM-yyyy').format(dateImplant);
           implant = doc.data()['implant'];
         }
       }
