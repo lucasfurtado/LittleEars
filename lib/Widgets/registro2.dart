@@ -172,6 +172,9 @@ class _FormularioCrianca extends State<FormularioCrianca> {
         'fullName': name
       });
 
+      await FirebaseAuth.instance.setLanguageCode("pt-br");
+      await user.sendEmailVerification();
+
       CollectionReference testCollection = FirebaseFirestore.instance.collection(
           'Child');
 
@@ -184,6 +187,8 @@ class _FormularioCrianca extends State<FormularioCrianca> {
       });
 
       userCreated(context);
+
+
 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {

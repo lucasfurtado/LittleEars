@@ -27,6 +27,19 @@ class _TextosState extends State<Textos> {
           password: password.toString()
       );
 
+      var thisUser = userCredential.user;
+
+      if(thisUser != null){
+        if(thisUser.emailVerified){
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Entrar()));
+        }
+        else{
+          GenericAlertDialog(context, 'Email não verificado.', 'Verifique sua caixa de email.');
+        }
+      }
+
       print('Logado');
 
       //int response = 0;
@@ -38,9 +51,7 @@ class _TextosState extends State<Textos> {
       //  response = data?['Counter'];
       //}
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Entrar()));
+
 
     } on FirebaseAuthException catch (exception) {
       print('Ocorreu um erro inesperado '+ exception.toString());

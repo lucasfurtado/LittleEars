@@ -31,6 +31,7 @@ class Forumlario extends StatelessWidget {
   //begin controllers
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailConfirmController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -119,9 +120,30 @@ class Forumlario extends StatelessWidget {
     }
   }
 
-  bool _validateData(String fullName, String email, String contact, String cpf, String password, String confirmPassword, BuildContext context){
+  bool _emailConformValidation(String email, String confirmEmail, BuildContext context){
     try{
-      if(_nameValidation(fullName, context) && _emailValidation(email, context) && _contactValidation(contact, context) && _cpfValidation(cpf, context) && _passwordMatch(password, confirmPassword, context)){
+      if(email == confirmEmail){
+        return true;
+      } else {
+        GenericAlertDialog(context,'Erro ao registrar','Os emails devem coincidir.');
+        return false;
+      }
+    } on Exception catch (exception){
+      //TODO LOG
+      print('Ocorreu um erro inesperado '+ exception.toString());
+      return false;
+    }
+
+  }
+
+  bool _validateData(String fullName, String email, String emailConfirm,String contact, String cpf, String password, String confirmPassword, BuildContext context){
+    try{
+      if(_nameValidation(fullName, context) &&
+          _emailValidation(email, context) &&
+          _emailConformValidation(email,emailConfirm, context) &&
+          _contactValidation(contact, context) &&
+          _cpfValidation(cpf, context) &&
+          _passwordMatch(password, confirmPassword, context)){
         return true;
       } else{
         return false;
@@ -171,6 +193,18 @@ class Forumlario extends StatelessWidget {
               labelText: "E-mail",
             ),
             controller: _emailController,
+          ),
+          const Divider(
+            color: Colors.white,
+            height: 10,
+          ),
+          TextField(
+            keyboardType: TextInputType.emailAddress,
+            style: const TextStyle(fontSize: 18),
+            decoration: const InputDecoration(
+              labelText: "Confirmar E-mail",
+            ),
+            controller: _emailConfirmController,
           ),
           const Divider(
             color: Colors.white,
@@ -235,7 +269,7 @@ class Forumlario extends StatelessWidget {
             // ignore: deprecated_member_use
             child: RaisedButton(
               onPressed: () => {
-                if(_validateData(_fullNameController.text, _emailController.text, _contactController.text, _cpfController.text, _passwordController.text, _confirmPasswordController.text, context)){
+                if(_validateData(_fullNameController.text, _emailController.text, _emailConfirmController.text,_contactController.text, _cpfController.text, _passwordController.text, _confirmPasswordController.text, context)){
                   Navigator.push(
                     context,
                     MaterialPageRoute(
