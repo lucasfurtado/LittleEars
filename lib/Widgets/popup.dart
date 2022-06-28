@@ -11,7 +11,10 @@ GenericAlertDialog(BuildContext context, String Title,String text) {
       "OK",
       style: TextStyle(fontSize: 18, color: Colors.deepPurple),
     ),
-    onPressed: () => Navigator.pop(context,true),
+    onPressed: () {
+      // Navigator.pop(context,true);
+      Navigator.of(context, rootNavigator: true).pop();
+    },
   );
   // configura o  AlertDialog
   AlertDialog alerta = AlertDialog(

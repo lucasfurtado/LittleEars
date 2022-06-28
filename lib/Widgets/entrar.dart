@@ -125,6 +125,26 @@ class Sobre extends StatelessWidget {
               ),
             ),
           ),
+          ButtonTheme(
+            minWidth: 150,
+            height: 40,
+            // ignore: deprecated_member_use
+            child: RaisedButton(
+              onPressed: () => {
+
+              },
+              child: const Text(
+                "Editar",
+                style: TextStyle(fontSize: 18),
+              ),
+              color: Colors.white,
+              splashColor: Colors.deepPurple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+                side: const BorderSide(color: Colors.deepPurple),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -22,21 +22,23 @@ class _TextosState extends State<Textos> {
 
   Future<void> _loginCheck(BuildContext context, String userName, String password) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
           email: userName.toString(),
           password: password.toString()
       );
 
       var thisUser = userCredential.user;
 
-      if(thisUser != null){
-        if(thisUser.emailVerified){
+      if (thisUser != null) {
+        if (thisUser.emailVerified) {
           Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Entrar()));
         }
-        else{
-          GenericAlertDialog(context, 'Email não verificado.', 'Verifique sua caixa de email.');
+        else {
+          throw Exception("email-not-verified");
+          //GenericAlertDialog(context, 'Email não verificado.', 'Verifique sua caixa de email.');
         }
       }
 
@@ -52,17 +54,28 @@ class _TextosState extends State<Textos> {
       //}
 
 
-
     } on FirebaseAuthException catch (exception) {
-      print('Ocorreu um erro inesperado '+ exception.toString());
-      if(exception.code == 'invalid-email'){
+      print('Ocorreu um erro inesperado ' + exception.toString());
+      if (exception.code == 'invalid-email') {
         GenericAlertDialog(context, 'Erro ao fazer login', 'Email invalido');
       }
-      else if(exception.code == 'user-not-found'){
-        GenericAlertDialog(context, 'Erro ao fazer login', 'Email não registrado');
+      else if (exception.code == 'user-not-found') {
+        GenericAlertDialog(
+            context, 'Erro ao fazer login', 'Email não registrado');
       }
-      else if(exception.code == 'wrong-password'){
+      else if (exception.code == 'wrong-password') {
         GenericAlertDialog(context, 'Erro ao fazer login', 'Senha errada');
+      }
+      else if (exception.code == 'invalid-email-verified') {
+        GenericAlertDialog(
+            context, 'Email não verificado.', 'Verifique sua caixa de email.');
+      }
+      else if(exception.code == 'unknown'){
+        GenericAlertDialog(context, 'Erro inesperado', 'Verifique o email e senha');
+      }
+    } on Exception catch (exception) {
+      if(exception.toString() == "Exception: email-not-verified"){
+        GenericAlertDialog(context, 'Email não verificado.', 'Verifique sua caixa de email.');
       }
     }
   }

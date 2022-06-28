@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:littlears/Widgets/popup.dart';
 
+import '../main.dart';
+
 
 class FormularioC extends StatefulWidget {
   const FormularioC(
@@ -133,7 +135,7 @@ class _FormularioCrianca extends State<FormularioCrianca> {
   bool _childImplantValidate(BuildContext context, String implant){
     try{
       if(implant.isNotEmpty){
-        if(implant == 'IC' || implant == 'HA' || implant == 'OUTRO'){
+        if(implant.toUpperCase() == 'IC' || implant.toUpperCase() == 'HA' || implant.toUpperCase() == 'OUTRO'){
           return true;
         } else{
           GenericAlertDialog(context,'Erro ao registrar','Digite IC, HA ou OUTRO.');
@@ -186,8 +188,13 @@ class _FormularioCrianca extends State<FormularioCrianca> {
         'userId': user.uid,
       });
 
-      userCreated(context);
-
+      //userCreated(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => App(),
+        ),
+      );
 
 
     } on FirebaseAuthException catch (e) {

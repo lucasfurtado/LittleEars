@@ -5,9 +5,15 @@ import 'registro2.dart';
 import 'dart:core';
 import 'package:email_validator/email_validator.dart';
 
-class Registro extends StatelessWidget {
+class Registro extends StatefulWidget {
   const Registro({Key? key}) : super(key: key);
 
+  @override
+  _Registro createState() => _Registro();
+
+}
+
+class _Registro extends State<Registro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +32,14 @@ class Registro extends StatelessWidget {
   }
 }
 
-class Forumlario extends StatelessWidget {
 
+
+class Forumlario extends StatefulWidget {
+  @override
+  _Forumlario createState() => _Forumlario();
+}
+
+class _Forumlario extends State<Forumlario> {
   //begin controllers
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -107,6 +119,17 @@ class Forumlario extends StatelessWidget {
 
   bool _passwordMatch(String password, String confirmPassword, BuildContext context){
     try{
+      if(password.isEmpty){
+        GenericAlertDialog(context,'Erro ao registrar','Senha não pode ser vazia.');
+        return false;
+      }
+      for(int i = 0; i < password.length; i++){
+        String aux = password[i];
+        if(aux == " "){
+          GenericAlertDialog(context,'Erro ao registrar','Senha não pode ter espaço.');
+          return false;
+        }
+      }
       if(password == confirmPassword){
         return true;
       } else {
@@ -155,6 +178,10 @@ class Forumlario extends StatelessWidget {
     }
   }
   //end validate methods
+
+  //variable handle
+  bool _isObscure = true;
+  //end variable handle
 
   @override
   Widget build(BuildContext context) {
@@ -217,8 +244,7 @@ class Forumlario extends StatelessWidget {
               labelText: "Telefone para contato",
             ),
             controller: _contactController,
-            inputFormatters: _contactController.text.length == 16 ? [_maskContactFormatter,] : [_maskContact2Formatter,],    //this isn't making any sense now just ignore it
-
+            inputFormatters: _contactController.text.length == 16 ? [_maskContact2Formatter,] : [_maskContactFormatter,],    //this isn't making any sense now just ignore it
           ),
           const Divider(
             color: Colors.white,
@@ -239,10 +265,17 @@ class Forumlario extends StatelessWidget {
           ),
           TextField(
             keyboardType: TextInputType.text,
-            obscureText: true,
-            style: const TextStyle(fontSize: 18),
-            decoration: const InputDecoration(
+            obscureText: _isObscure,
+            style: TextStyle(fontSize: 18),
+            decoration: InputDecoration(
               labelText: "Senha",
+              suffixIcon: IconButton(
+                  onPressed: () {
+                    setState((){
+                      _isObscure = !_isObscure;
+                    });
+                  },
+                  icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off ))
             ),
             controller: _passwordController,
           ),
@@ -252,7 +285,7 @@ class Forumlario extends StatelessWidget {
           ),
           TextField(
             keyboardType: TextInputType.text,
-            obscureText: true,
+            obscureText: _isObscure,
             style: const TextStyle(fontSize: 18),
             decoration: const InputDecoration(
               labelText: "Confirmar senha",
@@ -300,4 +333,6 @@ class Forumlario extends StatelessWidget {
       ),
     );
   }
+
 }
+
